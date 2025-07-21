@@ -1,7 +1,6 @@
 package net.minecraft.client;
 
 import static net.lax1dude.eaglercraft.v1_8.opengl.RealOpenGLEnums.*;
-
 import static net.lax1dude.eaglercraft.v1_8.internal.PlatformOpenGL._wglBindFramebuffer;
 
 import java.io.IOException;
@@ -11,6 +10,28 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import net.minecraft.entity.player.EntityPlayer;
+double reach = 4.5D; // hit range
+EntityPlayer closest = null;
+double closestDist = reach;
+
+for (Object o : this.theWorld.playerEntities) {
+    EntityPlayer player = (EntityPlayer) o;
+    if (player != this.thePlayer && !player.isDead) {
+        double dist = this.thePlayer.getDistanceToEntity(player);
+        if (dist < closestDist) {
+            closestDist = dist;
+            closest = player;
+        }
+    }
+}
+
+if (closest != null) {
+    this.playerController.attackEntity(this.thePlayer, closest);
+    this.thePlayer.swingItem();
+}
+
 
 import net.lax1dude.eaglercraft.v1_8.ClientUUIDLoadingCache;
 import net.lax1dude.eaglercraft.v1_8.Display;
@@ -1161,16 +1182,41 @@ public class Minecraft implements IThreadListener {
 	}
 
 	public MusicTicker func_181535_r() {
-		return this.mcMusicTicker;
-	}
+    return this.mcMusicTicker;
+}
 
-	/**+
-	 * Runs the current tick.
-	 */
-	public void runTick() throws IOException {
-		if (this.rightClickDelayTimer > 0) {
-			--this.rightClickDelayTimer;
-		}
+/**
+ * Runs the current tick.
+ */
+public void runTick() throws IOException {
+    if (this.rightClickDelayTimer > 0) {
+        --this.rightClickDelayTimer;
+    }
+
+    // KillAura toggle (press K to attack nearest player)
+    double reach = 4.5D; // hit range
+    EntityPlayer closest = null;
+    double closestDist = reach;
+
+    for (Object o : this.theWorld.playerEntities) {
+        EntityPlayer player = (EntityPlayer) o;
+        if (player != this.thePlayer && !player.isDead) {
+            double dist = this.thePlayer.getDistanceToEntity(player);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closest = player;
+            }
+        }
+    }
+
+    if (closest != null) {
+        this.playerController.attackEntity(this.thePlayer, closest);
+        this.thePlayer.swingItem();
+    }
+
+    // existing runTick logic continues here...
+}
+
 
 		RateLimitTracker.tick();
 
