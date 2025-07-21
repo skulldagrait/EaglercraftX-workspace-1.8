@@ -986,87 +986,8 @@ scaledResolution.getScaledHeight(), displayWidth, displayHeight, scaledResolutio
 public MusicTicker func_181535_r() {
 return this.mcMusicTicker;
 }
-public void runTick() throws IOException {
-if (this.rightClickDelayTimer > 0) {
---this.rightClickDelayTimer;
-}
-        double reach = 4.5D;
-        EntityPlayer closest = null;
-        double closestDist = reach;
-        for (Object o : this.theWorld.playerEntities) {
-            EntityPlayer player = (EntityPlayer) o;
-            if (player != this.thePlayer && !player.isDead) {
-                double dist = this.thePlayer.getDistanceToEntity(player);
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    closest = player;
-                }
-            }
-        }
-        if (closest != null) {
-            this.playerController.attackEntity(this.thePlayer, closest);
-            this.thePlayer.swingItem();
-        }
-
-double reach = 4.5D; 
-EntityPlayer closest = null;
-double closestDist = reach;
-for (Object o : this.theWorld.playerEntities) {
-EntityPlayer player = (EntityPlayer) o;
-if (player != this.thePlayer && !player.isDead) {
-double dist = this.thePlayer.getDistanceToEntity(player);
-if (dist < closestDist) {
-closestDist = dist;
-closest = player;
-}
-}
-}
-if (closest != null) {
-this.playerController.attackEntity(this.thePlayer, closest);
-this.thePlayer.swingItem();
-}
-}
-RateLimitTracker.tick();
-boolean isHostingLAN = LANServerController.isHostingLAN();
-this.isGamePaused = !isHostingLAN && this.isSingleplayer() && this.theWorld != null && this.thePlayer != null
-&& this.currentScreen != null && this.currentScreen.doesGuiPauseGame();
-if (isLANOpen && !isHostingLAN) {
-ingameGUI.getChatGUI().printChatMessage(new ChatComponentTranslation("lanServer.relayDisconnected"));
-}
-isLANOpen = isHostingLAN;
-if (wasPaused != isGamePaused) {
-SingleplayerServerController.setPaused(this.isGamePaused);
-if (isGamePaused) {
-mcSoundHandler.pauseSounds();
-} else {
-mcSoundHandler.resumeSounds();
-}
-wasPaused = isGamePaused;
-}
-PlatformWebRTC.runScheduledTasks();
-WebViewOverlayController.runTick();
-SingleplayerServerController.runTick();
-RelayUpdateChecker.runTick();
-UpdateResultObj update = UpdateService.getUpdateResult();
-if (update != null) {
-if (update.isSuccess()) {
-UpdateDataObj updateSuccess = update.getSuccess();
-if (EagRuntime.getConfiguration().isAllowBootMenu()) {
-if (currentScreen == null || (!(currentScreen instanceof GuiUpdateDownloadSuccess)
-&& !(currentScreen instanceof GuiUpdateInstallOptions))) {
-displayGuiScreen(new GuiUpdateDownloadSuccess(currentScreen, updateSuccess));
-}
-} else {
-UpdateService.quine(updateSuccess.clientSignature, updateSuccess.clientBundle);
-}
-} else {
-displayGuiScreen(
-new GuiScreenGenericErrorMessage("updateFailed.title", update.getFailure(), currentScreen));
-}
-}
-if (!this.isGamePaused) {
-this.ingameGUI.updateTick();
-}
+ if (!this.isGamePaused) {
+        this.ingameGUI.updateTick();
 VoiceClientController.tickVoiceClient(this);
 this.entityRenderer.getMouseOver(1.0F);
 if (!this.isGamePaused && this.theWorld != null) {
